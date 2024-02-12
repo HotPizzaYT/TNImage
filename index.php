@@ -129,7 +129,7 @@
 
     } else {
         // Serve default image if no file or password provided
-        header("Content-Type: text/plain");
+        header("Content-Type: ".mime_content_type($image));
         echo file_get_contents($image);
     }
     ?>
