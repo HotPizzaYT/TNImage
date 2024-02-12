@@ -5,6 +5,8 @@ $mainDirectory = realpath(dirname(__FILE__));
 
 if (isset($_GET['password']) && $_GET['password'] === $password && !($_SERVER["REQUEST_METHOD"] == "POST")) {
     // Password is correct and it's not a POST request
+    // Viewport
+    echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
     $currentDirectory = $mainDirectory;
     if (isset($_GET['directory'])) {
         $directory = $_GET['directory'];
@@ -68,11 +70,13 @@ if (isset($_GET['password']) && $_GET['password'] === $password && !($_SERVER["R
                 }
             }
         }
-        echo "<p><form action='".$_SERVER["PHP_SELF"]."' method='POST' enctype='multipart/form-data'><input type='file' name='upload'><input type='hidden' name='directory' value='$directory'><input type='hidden' name='password' value='$password'><input type='submit' value='Upload file' name='submit'></form></p>";
+        echo "<p><form action='".htmlentities($_SERVER["PHP_SELF"])."' method='POST' enctype='multipart/form-data'><input type='file' name='upload'><input type='hidden' name='directory' value='$directory'><input type='hidden' name='password' value='$password'><input type='submit' value='Upload file' name='submit'></form></p>";
+        echo "<p><form action='".htmlentities($_SERVER["PHP_SELF"])."' method='POST' enctype='multipart/form-data'><input type='hidden' name='directory' value='$directory'><input type='hidden' name='password' value='$password'><label for='mkd'>Create directory: </label><input type='text' name='mkd' maxlength='64'> <input type='submit' value='Create folder' name='createfolder'></form></p>";
     }
 } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["directory"]) && isset($_POST["password"]) && isset($_FILES["upload"]) && $_FILES["upload"]["error"] == 0 && $_POST["password"] === $password) {
     $baseDirectory = realpath(dirname(__FILE__)); // Get the absolute path of the base directory
     $directory = $_POST["directory"]; // Get the directory provided via POST
+    echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
 
     // Construct the full path of the upload directory
     $uploadDir = realpath($baseDirectory . DIRECTORY_SEPARATOR . $directory);
@@ -88,6 +92,18 @@ if (isset($_GET['password']) && $_GET['password'] === $password && !($_SERVER["R
     } else {
         echo "Action not allowed. <a href='?password=".$_POST["password"]."&directory=".$_POST["directory"]."'>Go back to directory</a>";
     }
+} elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["directory"]) && isset($_POST["password"]) && $_POST["password"] === $password && isset($_POST["mkd"])) {
+    // Make directory
+    $baseDirectory = realpath(dirname(__FILE__)); // Get the absolute path of the base directory
+    $directory = $_POST["directory"]; // Get the directory provided via POST
+    echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
+
+    // Construct the full path of the upload directory
+    $uploadDir = realpath($baseDirectory . DIRECTORY_SEPARATOR . $directory);
+    if(mkdir($uploadDir . DIRECTORY_SEPARATOR . $_POST["mkd"] . DIRECTORY_SEPARATOR, 0777)){
+        echo "<p>Directory created. Click <a href='?directory=$directory&password=".$_POST["password"]."'>here</a> to go back to parent directory</p>";
+    }
+
 } else {
     // Serve default image if no file or password provided
     header("Content-Type: ".mime_content_type($image));
