@@ -1,4 +1,4 @@
-    <?php
+<?php
     $password = "PleaseChangeMe"; // Change this to your desired password
     $image = "image.png";
     $mainDirectory = realpath(dirname(__FILE__));
@@ -129,8 +129,7 @@
 
     } else {
         // Serve default image if no file or password provided
-        header("Content-Type: ".mime_content_type($image));
-        ob_clean();
+        header("Content-Type: text/plain");
         echo file_get_contents($image);
     }
     ?>
