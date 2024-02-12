@@ -130,6 +130,7 @@
     } else {
         // Serve default image if no file or password provided
         header("Content-Type: ".mime_content_type($image));
+        ob_clean();
         echo file_get_contents($image);
     }
     ?>
